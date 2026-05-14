@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heni Ben Amara — Flutter Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --accent: #00e5ff;
+    --accent2: #7c3aed;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --card: #13131f;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.25s ease;
+    opacity: 0.5;
+  }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* Grid lines */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 4rem;
+    background: rgba(10,10,15,0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .nav-links { display: flex; gap: 2.5rem; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--accent);
+    transition: width 0.3s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links a:hover::after { width: 100%; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 0 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-text {
+    position: absolute;
+    right: -2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(8rem, 18vw, 20rem);
+    font-weight: 800;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(0,229,255,0.06);
+    white-space: nowrap;
+    user-select: none;
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(0,229,255,0.08) 0%, transparent 70%);
+    top: 50%; left: 30%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    animation: pulse 4s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  }
+
+  .hero-content { position: relative; z-index: 2; max-width: 800px; }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.2);
+    color: var(--accent);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.4rem 1rem;
+    border-radius: 2px;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .hero-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: blink 1.5s ease-in-out infinite;
+  }
+
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+  .hero-name {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 800;
+    line-height: 0.95;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+
+  .hero-name span {
+    display: block;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--accent);
+  }
+
+  .hero-subtitle {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 500px;
+    margin-bottom: 3rem;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+
+  .hero-subtitle strong { color: var(--text); }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    cursor: none;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+  }
+  .btn-primary:hover {
+    background: transparent;
+    color: var(--accent);
+    box-shadow: 0 0 30px rgba(0,229,255,0.3);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border-color: var(--border);
+  }
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .hero-stats {
+    position: absolute;
+    right: 4rem;
+    bottom: 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    animation: fadeUp 0.8s 0.4s ease both;
+  }
+
+  .stat { text-align: right; }
+  .stat-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SECTIONS */
+  section {
+    padding: 8rem 4rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 5rem;
+  }
+
+  .section-num {
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    opacity: 0.6;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+    margin-left: 2rem;
+  }
+
+  /* EXPERIENCE */
+  .exp-grid {
+    display: grid;
+    gap: 2px;
+  }
+
+  .exp-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    transition: border-color 0.3s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .exp-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent);
+    transform: scaleY(0);
+    transition: transform 0.3s;
+    transform-origin: bottom;
+  }
+
+  .exp-item:hover {
+    border-color: rgba(0,229,255,0.3);
+    transform: translateX(4px);
+  }
+  .exp-item:hover::before { transform: scaleY(1); }
+
+  .exp-company {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+
+  .exp-role {
+    color: var(--accent);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .exp-desc {
+    color: var(--muted);
+    font-size: 0.8rem;
+    line-height: 1.9;
+  }
+
+  .exp-desc li { margin-bottom: 0.4rem; list-style: none; padding-left: 1rem; position: relative; }
+  .exp-desc li::before { content: '—'; position: absolute; left: 0; color: var(--accent); opacity: 0.5; }
+
+  .exp-period {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    padding-top: 0.3rem;
+  }
+
+  .exp-location {
+    font-size: 0.65rem;
+    color: var(--muted);
+    opacity: 0.6;
+    text-align: right;
+    margin-top: 0.3rem;
+  }
+
+  /* SKILLS */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .skill-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    transition: border-color 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skill-card::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 60px; height: 60px;
+    background: radial-gradient(circle at top right, rgba(0,229,255,0.1), transparent 70%);
+    pointer-events: none;
+  }
+
+  .skill-card:hover { border-color: rgba(0,229,255,0.3); }
+
+  .skill-category {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.2rem;
+    opacity: 0.8;
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    padding: 0.3rem 0.75rem;
+    font-size: 0.7rem;
+    color: var(--text);
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+
+  .tag:hover {
+    background: rgba(0,229,255,0.1);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .tag.highlight {
+    background: rgba(0,229,255,0.1);
+    border-color: rgba(0,229,255,0.3);
+    color: var(--accent);
+  }
+
+  /* CERTIFICATIONS */
+  .certs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .cert-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    transition: border-color 0.3s;
+  }
+
+  .cert-card:hover { border-color: rgba(0,229,255,0.3); }
+
+  .cert-icon {
+    width: 44px; height: 44px;
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .cert-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    line-height: 1.3;
+  }
+
+  .cert-issuer {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* PROJECTS */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .project-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    transition: border-color 0.3s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
+    cursor: none;
+  }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,229,255,0.03) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .project-card:hover {
+    border-color: rgba(0,229,255,0.35);
+    transform: translateY(-4px);
+  }
+  .project-card:hover::before { opacity: 1; }
+
+  .project-card.featured {
+    grid-column: span 2;
+    border-color: rgba(0,229,255,0.15);
+  }
+
+  @media (max-width: 900px) {
+    .project-card.featured { grid-column: span 1; }
+  }
+
+  .project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .project-icon {
+    width: 48px; height: 48px;
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+
+  .project-badge {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid;
+  }
+
+  .badge-real {
+    color: #00e5ff;
+    border-color: rgba(0,229,255,0.3);
+    background: rgba(0,229,255,0.07);
+  }
+
+  .badge-concept {
+    color: #a78bfa;
+    border-color: rgba(167,139,250,0.3);
+    background: rgba(167,139,250,0.07);
+  }
+
+  .project-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .project-desc {
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.9;
+    flex: 1;
+  }
+
+  .project-highlights {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .highlight-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .highlight-item::before {
+    content: '▸';
+    color: var(--accent);
+    opacity: 0.7;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .project-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .stack-tag {
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    background: rgba(0,229,255,0.06);
+    border: 1px solid rgba(0,229,255,0.15);
+    padding: 0.2rem 0.5rem;
+  }
+
+  /* CONTACT */
+  .contact-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 5rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(0,229,255,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .contact-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .contact-sub {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-bottom: 3rem;
+    line-height: 1.8;
+  }
+
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    transition: color 0.2s;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .contact-link:hover { color: var(--accent); border-color: rgba(0,229,255,0.3); }
+
+  /* FOOTER */
+  footer {
+    padding: 2rem 4rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.7rem;
+    color: var(--muted);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* SCROLL INDICATOR */
+  .scroll-indicator {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: var(--accent);
+    z-index: 200;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  /* Reveal animation */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 1.5rem 2rem; }
+    .nav-links { display: none; }
+    .hero { padding: 0 2rem; }
+    section { padding: 5rem 2rem; }
+    .hero-stats { display: none; }
+    .hero-bg-text { display: none; }
+    .contact-section { padding: 3rem 2rem; }
+    footer { padding: 2rem; flex-direction: column; gap: 1rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="scroll-indicator" id="scrollIndicator"></div>
+
+<nav>
+  <div class="nav-logo">HBA</div>
+  <div class="nav-links">
+    <a href="#experience">Experience</a>
+    <a href="#projects">Projects</a>
+    <a href="#skills">Skills</a>
+    <a href="#certifications">Certs</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-bg-text">FLUTTER</div>
+
+  <div class="hero-content">
+    <div class="hero-tag">Available for freelance</div>
+
+    <h1 class="hero-name">
+      Heni<br>
+      <span>Ben Amara</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      Flutter Engineer with <strong>3+ years</strong> building enterprise mobile &amp; web apps.<br>
+      Specialized in <strong>Bloc/Cubit architecture</strong>, clean code, and
+      cross-platform solutions that actually ship.
+    </p>
+
+    <div class="hero-cta">
+      <a href="#contact" class="btn btn-primary">→ Let's Work Together</a>
+      <a href="#experience" class="btn btn-secondary">View Experience</a>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-number">3+</div>
+      <div class="stat-label">Years exp</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">4</div>
+      <div class="stat-label">Companies</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">C1</div>
+      <div class="stat-label">English level</div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-header reveal">
+    <span class="section-num">01</span>
+    <h2 class="section-title">Experience</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="exp-grid">
+
+    <div class="exp-item reveal">
+      <div>
+        <div class="exp-company">PASS Consulting Group</div>
+        <div class="exp-role">Flutter Developer</div>
+        <ul class="exp-desc">
+          <li>Contributed to enterprise mobile and web apps using Flutter</li>
+          <li>Leveraged Bloc/Cubit architecture for stable, maintainable performance</li>
+          <li>Collaborated with multinational teams via Jira and GitLab</li>
+        </ul>
+      </div>
+      <div>
+        <div class="exp-period">Feb 2024 – Present</div>
+        <div class="exp-location">Remote · Germany</div>
+      </div>
+    </div>
+
+    <div class="exp-item reveal">
+      <div>
+        <div class="exp-company">Unilog</div>
+        <div class="exp-role">Flutter Developer</div>
+        <ul class="exp-desc">
+          <li>Built full-scale enterprise app: Finance, HRM, CRM, dashboarding</li>
+          <li>Developed a scanner app for seamless data capture and integration</li>
+          <li>Implemented GetX for state management, GitLab for version control</li>
+        </ul>
+      </div>
+      <div>
+        <div class="exp-period">May 2023 – Jan 2024</div>
+        <div class="exp-location">Sfax, Tunisia</div>
+      </div>
+    </div>
+
+    <div class="exp-item reveal">
+      <div>
+        <div class="exp-company">Logicom</div>
+        <div class="exp-role">Software Developer</div>
+        <ul class="exp-desc">
+          <li>Built ERP modules: Inventory, Production, Commercial (VB.NET, Flutter, ReactJS)</li>
+          <li>Diagnosed and resolved software bugs to ensure system stability</li>
+          <li>Provided technical consulting to optimize business processes</li>
+        </ul>
+      </div>
+      <div>
+        <div class="exp-period">Nov 2022 – May 2023</div>
+        <div class="exp-location">Sfax, Tunisia</div>
+      </div>
+    </div>
+
+    <div class="exp-item reveal">
+      <div>
+        <div class="exp-company">Procan</div>
+        <div class="exp-role">End-of-Study Intern</div>
+        <ul class="exp-desc">
+          <li>Designed a delivery management platform (Flutter, ReactJS, Node.js, MongoDB)</li>
+          <li>Delivered cross-platform solution in 5 months — recognized as <em>"Best Project"</em> of the cohort</li>
+        </ul>
+      </div>
+      <div>
+        <div class="exp-period">Feb 2022 – Jun 2022</div>
+        <div class="exp-location">Sfax, Tunisia</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="section-header reveal">
+    <span class="section-num">02</span>
+    <h2 class="section-title">Projects</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="projects-grid">
+
+    <!-- DESK BOOKING — featured -->
+    <div class="project-card featured reveal">
+      <div class="project-header">
+        <div class="project-icon">🏢</div>
+        <span class="project-badge badge-real">Real Project</span>
+      </div>
+      <div class="project-name">SmartDesk — Desk & Room Booking Platform</div>
+      <div class="project-desc">
+        Enterprise workspace management app used by corporate teams to reserve desks and meeting rooms. The standout feature is a real-time 2D/3D floor plan viewer that lets employees visualize office layout, see available spots, and book in seconds — all from their phone or desktop.
+      </div>
+      <div class="project-highlights">
+        <div class="highlight-item">Interactive 2D floor plan with live availability overlay per desk/room</div>
+        <div class="highlight-item">3D room visualization built with custom Flutter rendering for immersive preview</div>
+        <div class="highlight-item">Real-time seat status updates via WebSocket — no page refresh needed</div>
+        <div class="highlight-item">Admin dashboard for capacity management, usage analytics, and room config</div>
+        <div class="highlight-item">Integrated calendar sync and push notification reminders</div>
+      </div>
+      <div class="project-stack">
+        <span class="stack-tag">Flutter</span>
+        <span class="stack-tag">Bloc/Cubit</span>
+        <span class="stack-tag">WebSocket</span>
+        <span class="stack-tag">REST API</span>
+        <span class="stack-tag">2D/3D Rendering</span>
+        <span class="stack-tag">GitLab</span>
+      </div>
+    </div>
+
+    <!-- WHISTLEBLOWER -->
+    <div class="project-card reveal">
+      <div class="project-header">
+        <div class="project-icon">🔒</div>
+        <span class="project-badge badge-real">Real Project</span>
+      </div>
+      <div class="project-name">SafeVoice — Anonymous Whistleblower App</div>
+      <div class="project-desc">
+        A secure, anonymity-first reporting platform enabling employees to submit sensitive reports without fear of exposure. Built with end-to-end encryption, zero-identity submission flows, and a case management backend for compliance teams.
+      </div>
+      <div class="project-highlights">
+        <div class="highlight-item">Anonymous report submission with no traceable metadata stored</div>
+        <div class="highlight-item">Encrypted two-way messaging between reporter and reviewer</div>
+        <div class="highlight-item">Case tracking dashboard for HR/compliance teams with status workflows</div>
+        <div class="highlight-item">Multi-language support (EN, FR, AR) for international deployments</div>
+      </div>
+      <div class="project-stack">
+        <span class="stack-tag">Flutter</span>
+        <span class="stack-tag">Bloc</span>
+        <span class="stack-tag">Encryption</span>
+        <span class="stack-tag">REST API</span>
+        <span class="stack-tag">.NET Backend</span>
+      </div>
+    </div>
+
+    <!-- TIME TRACKING -->
+    <div class="project-card reveal">
+      <div class="project-header">
+        <div class="project-icon">⏱</div>
+        <span class="project-badge badge-real">Real Project</span>
+      </div>
+      <div class="project-name">ChronoTrack — Employee Time Tracking</div>
+      <div class="project-desc">
+        A cross-platform time tracking solution for enterprise teams. Employees clock in/out, log tasks, and track billable hours — while managers get real-time visibility into team activity, timesheets, and productivity reports.
+      </div>
+      <div class="project-highlights">
+        <div class="highlight-item">Clock-in/out with GPS verification and offline support</div>
+        <div class="highlight-item">Task-based time logging linked to projects and clients</div>
+        <div class="highlight-item">Manager dashboard: live team status, timesheets, export to PDF/Excel</div>
+        <div class="highlight-item">Overtime alerts and monthly summary reports</div>
+      </div>
+      <div class="project-stack">
+        <span class="stack-tag">Flutter</span>
+        <span class="stack-tag">Cubit</span>
+        <span class="stack-tag">SQLite</span>
+        <span class="stack-tag">GPS</span>
+        <span class="stack-tag">REST API</span>
+      </div>
+    </div>
+
+    <!-- STOCK / BARCODE -->
+    <div class="project-card reveal">
+      <div class="project-header">
+        <div class="project-icon">📦</div>
+        <span class="project-badge badge-real">Real Project</span>
+      </div>
+      <div class="project-name">StockScan — Inventory Management with Barcode & QR</div>
+      <div class="project-desc">
+        A warehouse and stock management app that replaces manual inventory processes with fast barcode and QR code scanning. Built for speed — scan a product, update stock levels, generate movement logs, all in one tap.
+      </div>
+      <div class="project-highlights">
+        <div class="highlight-item">Real-time barcode and QR scanning using device camera</div>
+        <div class="highlight-item">Instant stock update, product lookup, and movement history</div>
+        <div class="highlight-item">Low-stock alerts and reorder notifications</div>
+        <div class="highlight-item">Integrated with ERP backend for live inventory sync</div>
+      </div>
+      <div class="project-stack">
+        <span class="stack-tag">Flutter</span>
+        <span class="stack-tag">Barcode Scanner</span>
+        <span class="stack-tag">QR Code</span>
+        <span class="stack-tag">GetX</span>
+        <span class="stack-tag">ERP Integration</span>
+      </div>
+    </div>
+
+    <!-- DELIVERY B2B -->
+    <div class="project-card reveal">
+      <div class="project-header">
+        <div class="project-icon">🚚</div>
+        <span class="project-badge badge-real">Real Project</span>
+      </div>
+      <div class="project-name">RouteFlow — B2B Delivery Management Platform</div>
+      <div class="project-desc">
+        A full-cycle B2B logistics platform connecting suppliers, dispatchers, and delivery drivers. Recognized as "Best Project" of the cohort, it handles order creation, real-time driver tracking, proof-of-delivery capture, and automated client notifications.
+      </div>
+      <div class="project-highlights">
+        <div class="highlight-item">Live driver tracking on interactive map with route optimization</div>
+        <div class="highlight-item">Digital proof of delivery: signature capture + photo upload</div>
+        <div class="highlight-item">Three-role system: Admin, Dispatcher, Driver — each with tailored UX</div>
+        <div class="highlight-item">Automated SMS/email notifications at each delivery milestone</div>
+      </div>
+      <div class="project-stack">
+        <span class="stack-tag">Flutter</span>
+        <span class="stack-tag">ReactJS</span>
+        <span class="stack-tag">Node.js</span>
+        <span class="stack-tag">MongoDB</span>
+        <span class="stack-tag">Google Maps API</span>
+      </div>
+    </div>
+
+    <!-- CONCEPT: Finance Dashboard -->
+    <div class="project-card reveal">
+      <div class="project-header">
+        <div class="project-icon">📊</div>
+        <span class="project-badge badge-concept">Concept</span>
+      </div>
+      <div class="project-name">FinPulse — Personal Finance Dashboard</div>
+      <div class="project-desc">
+        A beautifully designed personal finance tracker that aggregates spending, visualizes habits, and nudges users toward savings goals. Built as a showcase of Flutter's data visualization capabilities.
+      </div>
+      <div class="project-highlights">
+        <div class="highlight-item">Animated charts for spending categories and monthly trends</div>
+        <div class="highlight-item">Budget rules engine with smart overspend alerts</div>
+        <div class="highlight-item">Dark/light adaptive UI with smooth page transitions</div>
+      </div>
+      <div class="project-stack">
+        <span class="stack-tag">Flutter</span>
+        <span class="stack-tag">Bloc</span>
+        <span class="stack-tag">FL Chart</span>
+        <span class="stack-tag">Hive</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="section-header reveal">
+    <span class="section-num">03</span>
+    <h2 class="section-title">Tech Stack</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <div class="skill-category">Mobile & Web</div>
+      <div class="skill-tags">
+        <span class="tag highlight">Flutter</span>
+        <span class="tag highlight">Dart</span>
+        <span class="tag">Bloc / Cubit</span>
+        <span class="tag">GetX</span>
+        <span class="tag">Kotlin</span>
+        <span class="tag">ReactJS</span>
+        <span class="tag">Angular</span>
+      </div>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-category">Backend & Data</div>
+      <div class="skill-tags">
+        <span class="tag">Node.js</span>
+        <span class="tag">MongoDB</span>
+        <span class="tag">.NET</span>
+        <span class="tag">RESTful APIs</span>
+        <span class="tag">SQL</span>
+      </div>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-category">Practices & Tools</div>
+      <div class="skill-tags">
+        <span class="tag">Agile / Scrum</span>
+        <span class="tag">Jira</span>
+        <span class="tag">Git / GitLab</span>
+        <span class="tag">Clean Architecture</span>
+        <span class="tag">UI/UX</span>
+      </div>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-category">Languages</div>
+      <div class="skill-tags">
+        <span class="tag highlight">Arabic (Native)</span>
+        <span class="tag highlight">English (C1)</span>
+        <span class="tag">French (Professional)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CERTIFICATIONS -->
+<section id="certifications">
+  <div class="section-header reveal">
+    <span class="section-num">04</span>
+    <h2 class="section-title">Certifications</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="certs-grid">
+    <div class="cert-card reveal">
+      <div class="cert-icon">🏆</div>
+      <div>
+        <div class="cert-name">Scrum Foundation Professional Certificate</div>
+        <div class="cert-issuer">SFPC — CertiProf</div>
+      </div>
+    </div>
+    <div class="cert-card reveal">
+      <div class="cert-icon">🌍</div>
+      <div>
+        <div class="cert-name">EF SET English Certificate — C1 Advanced</div>
+        <div class="cert-issuer">EF Education First</div>
+      </div>
+    </div>
+    <div class="cert-card reveal">
+      <div class="cert-icon">🐍</div>
+      <div>
+        <div class="cert-name">Information Technology Specialist in Python</div>
+        <div class="cert-issuer">Certiport</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" style="padding: 0 4rem 8rem;">
+  <div class="contact-section reveal">
+    <h2 class="contact-title">Let's build<br><span style="color: var(--accent);">something.</span></h2>
+    <p class="contact-sub">
+      Open for freelance Flutter projects, bug fixes, or full app builds.<br>
+      Fast delivery · Clean code · Enterprise-grade quality.
+    </p>
+    <div class="contact-links">
+      <a href="mailto:henibenamara10@gmail.com" class="contact-link">
+        ✉ henibenamara10@gmail.com
+      </a>
+      <a href="https://linkedin.com/in/henibenamara" target="_blank" class="contact-link">
+        ⬡ linkedin.com/in/henibenamara
+      </a>
+      <a href="tel:+21623075191" class="contact-link">
+        ☎ +216 23 075 191
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2025 Heni Ben Amara</span>
+  <span>Flutter Developer · Sfax, Tunisia</span>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX; mouseY = e.clientY;
+    cursor.style.left = mouseX - 6 + 'px';
+    cursor.style.top = mouseY - 6 + 'px';
+  });
+
+  function animateRing() {
+    ringX += (mouseX - ringX - 18) * 0.12;
+    ringY += (mouseY - ringY - 18) * 0.12;
+    ring.style.left = ringX + 'px';
+    ring.style.top = ringY + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'scale(2)';
+      ring.style.transform = 'scale(1.5)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'scale(1)';
+      ring.style.transform = 'scale(1)';
+    });
+  });
+
+  // Scroll progress
+  const indicator = document.getElementById('scrollIndicator');
+  window.addEventListener('scroll', () => {
+    const scrolled = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+    indicator.style.width = scrolled + '%';
+  });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
