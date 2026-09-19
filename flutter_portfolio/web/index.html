@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="description" content="Heni Ben Amara - Flutter developer. Portfolio built entirely with Flutter Web.">
+  <meta name="theme-color" content="#0A0A12">
+
+  <meta property="og:title" content="Heni Ben Amara - Flutter Developer">
+  <meta property="og:description" content="Portfolio built entirely with Flutter Web. Every pixel is Dart.">
+  <meta property="og:type" content="website">
+
+  <title>Heni Ben Amara - Flutter Developer</title>
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%234DB5FF'/%3E%3Cstop offset='1' stop-color='%238B5CF6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='%230A0A12'/%3E%3Cpath d='M20 34 L34 20 L44 20 L30 34 L44 48 L34 48 Z' fill='url(%23g)'/%3E%3C/svg%3E">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0A0A12; }
+    #splash {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: radial-gradient(1200px 600px at 50% 40%, #16162a 0%, #0A0A12 70%);
+      transition: opacity .55s ease, visibility .55s ease;
+      font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+    }
+    #splash.gone { opacity: 0; visibility: hidden; }
+    .mark { width: 64px; height: 64px; border-radius: 18px;
+      background: linear-gradient(135deg, #4DB5FF, #8B5CF6);
+      animation: pulse 1.6s ease-in-out infinite; }
+    .bar { margin-top: 26px; width: 160px; height: 2px; border-radius: 2px; background: rgba(255,255,255,.12); overflow: hidden; }
+    .bar i { display: block; height: 100%; width: 40%; border-radius: 2px;
+      background: linear-gradient(90deg, #4DB5FF, #8B5CF6);
+      animation: slide 1.2s ease-in-out infinite; }
+    .hint { margin-top: 16px; color: rgba(255,255,255,.45); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
+    @keyframes pulse { 0%,100% { transform: scale(1); border-radius: 18px; } 50% { transform: scale(.86) rotate(12deg); border-radius: 26px; } }
+    @keyframes slide { 0% { transform: translateX(-110%);} 100% { transform: translateX(300%);} }
+  </style>
+</head>
+<body>
+  <div id="splash">
+    <div class="mark"></div>
+    <div class="bar"><i></i></div>
+    <div class="hint">compiling dart to the web</div>
+  </div>
+
+  <script>
+    window.removeSplash = function () {
+      var s = document.getElementById('splash');
+      if (s) { s.classList.add('gone'); setTimeout(function () { if (s && s.parentNode) s.parentNode.removeChild(s); }, 700); }
+    };
+  </script>
+
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

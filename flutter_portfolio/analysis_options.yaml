@@ -1,0 +1,12 @@
+analyzer:
+  errors:
+    deprecated_member_use: ignore
+  exclude:
+    - build/**
+    - web/**
+
+linter:
+  rules:
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - avoid_unnecessary_containers

@@ -1,0 +1,38 @@
+# Builds the Flutter web portfolio and publishes it to the gh-pages branch.
+# Repo settings -> Pages -> Source: "Deploy from a branch" -> gh-pages / root.
+name: Deploy Flutter portfolio
+
+on:
+  push:
+    branches: [main]
+    paths: ["flutter_portfolio/**", ".github/workflows/deploy-flutter-portfolio.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: flutter_portfolio
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - run: flutter --version
+      - run: flutter pub get
+      - run: flutter analyze --no-fatal-infos || true
+
+      # Published from the user-site repo (<user>.github.io), so it is served
+      # from the root. For a project repo use --base-href /<repo>/ instead.
+      - run: flutter build web --release --base-href /
+
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./flutter_portfolio/build/web
