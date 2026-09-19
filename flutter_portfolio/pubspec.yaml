@@ -14,9 +14,8 @@ flutter:
   uses-material-design: true
 
   # Images / CV live here. Drop your files in and uncomment.
-  # assets:
-  #   - assets/images/
-  #   - assets/docs/
+  assets:
+    - assets/images/me.png
 
   # OPTIONAL: bundle real fonts instead of relying on the CDN <link> in web/index.html.
   # Download Space Grotesk + Inter (ttf) into assets/fonts/ then uncomment:

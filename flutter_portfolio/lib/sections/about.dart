@@ -91,37 +91,53 @@ class _Portrait extends StatelessWidget {
                     border: Border.all(color: c.border),
                     borderRadius: BorderRadius.circular(28),
                   ),
-                  // Swap this Center for:
-                  //   Image.asset('assets/images/me.png', fit: BoxFit.cover)
-                  // once you drop a photo in assets/images (and enable the
-                  // assets block in pubspec.yaml).
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        const LogoMark(size: 92),
-                        const SizedBox(height: 18),
-                        Text(
-                          'your photo here',
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelMedium
-                              ?.copyWith(color: c.faint),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'assets/images/me.png',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(color: c.faint, fontSize: 11),
-                        ),
-                      ],
-                    ),
+                  child: Image.asset(
+                    'assets/images/me.png',
+                    fit: BoxFit.cover,
+                    alignment: Alignment.topCenter,
+                    // The source photo is 3020px square; decode it smaller.
+                    cacheWidth: 1000,
+                    errorBuilder:
+                        (BuildContext context, Object error, StackTrace? s) =>
+                            const _PhotoPlaceholder(),
                   ),
                 ),
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Shown until a photo exists at assets/images/me.png.
+class _PhotoPlaceholder extends StatelessWidget {
+  const _PhotoPlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    final AppColors c = context.c;
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          const LogoMark(size: 92),
+          const SizedBox(height: 18),
+          Text(
+            'your photo here',
+            style: Theme.of(context)
+                .textTheme
+                .labelMedium
+                ?.copyWith(color: c.faint),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'assets/images/me.png',
+            style: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.copyWith(color: c.faint, fontSize: 11),
           ),
         ],
       ),
