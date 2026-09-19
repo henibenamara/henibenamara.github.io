@@ -55,7 +55,7 @@ const Profile profile = Profile(
   phone: '21623075191',
   github: 'https://github.com/henibenamara', // <-- EDIT (not in the CV)
   linkedin: 'https://www.linkedin.com/in/henibenamara',
-  facebook: 'https://www.facebook.com/your-handle', // <-- EDIT
+  facebook: 'https://www.facebook.com/henibenamara1/',
   // Put your PDF at  web/cv.pdf  and this link just works after a build.
   cvUrl: 'cv.pdf',
   rotatingRoles: <String>[
